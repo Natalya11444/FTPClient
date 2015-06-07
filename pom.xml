@@ -4,12 +4,4 @@
 	<groupId>com.test.nat</groupId>
 	<artifactId>FTPClient</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<dependencies>
-		<dependency>
-			<groupId>commons-net</groupId>
-			<artifactId>commons-net</artifactId>
-			<version>3.3</version>
-		</dependency>
-
-	</dependencies>
 </project>
