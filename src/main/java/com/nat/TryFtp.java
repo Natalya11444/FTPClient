@@ -1,12 +1,10 @@
 package com.nat;
 
 import client.FtpClient;
-import client.FtpDownloader;
 
 public class TryFtp {
 
 	private static UserData userData;
-
 	private static String fileCmd;
 	private static FtpClient ftp;
 
@@ -16,9 +14,10 @@ public class TryFtp {
 		while (true) {
 			userData = UserDataProvider.getDataForConnection();
 
-			ftp.connectAndShowFiles(userData.getHost(), userData.getPort(),
-					userData.getLogin(), userData.getPassword());
-			break;
+			if (ftp.connectAndShowFiles(userData.getHost(), userData.getPort(),
+					userData.getLogin(), userData.getPassword())) {
+				break;
+			}
 		}
 		// get the command from user
 		while (true) {

@@ -11,7 +11,6 @@ import com.nat.UserData;
 
 public class FtpClient {
 	public static final boolean DEBUG_MODE_ON = true;
-
 	private Socket commandSocket;
 	private PrintWriter commandWriter;
 	private BufferedReader commandReader;
@@ -61,16 +60,16 @@ public class FtpClient {
 		return true;
 	}
 
-	public void changeDir(String dir) throws Exception {
+	private void changeDir(String dir) throws Exception {
 		send(CHANGE_DIR_CMD + SPACE + dir);
 		nextResponse();
 	}
 
-	public void list() throws Exception {
+	private void list() throws Exception {
 		System.out.println("List:\n" + getResponsePasv(LIST_CMD));
 	}
 
-	public String getResponsePasv(String cmd) throws Exception {
+	private String getResponsePasv(String cmd) throws Exception {
 		Socket socket = getNewSocket(cmd);
 		InputStreamReader reader = new InputStreamReader(
 				socket.getInputStream());
@@ -119,7 +118,7 @@ public class FtpClient {
 		return socket;
 	}
 
-	void send(String command) throws Exception {
+	private void send(String command) throws Exception {
 		if (DEBUG_MODE_ON) {
 			System.out.println("Send now: " + command);
 		}
@@ -127,7 +126,7 @@ public class FtpClient {
 		commandWriter.flush();
 	}
 
-	String nextLine() throws Exception {
+	public String nextLine() throws Exception {
 		String line = commandReader.readLine();
 		lastLine = line;
 		if (DEBUG_MODE_ON) {
@@ -136,7 +135,7 @@ public class FtpClient {
 		return line;
 	}
 
-	String nextResponse() throws Exception {
+	private String nextResponse() throws Exception {
 		StringBuilder response = new StringBuilder();
 		while (true) {
 			String line = nextLine();
@@ -213,12 +212,13 @@ public class FtpClient {
 		return isFile;
 	}
 
-	public void goToDirAndShowFiles(String fileCmd) {
+	public boolean goToDirAndShowFiles(String fileCmd) {
 		try {
 			// go to the directory
 			changeDir(fileCmd);
 		} catch (Exception e1) {
 			System.out.println("Can't go to the directory " + fileCmd);
+			return false;
 		}
 		if (DEBUG_MODE_ON) {
 			System.out.println("changed dir:");
@@ -228,14 +228,17 @@ public class FtpClient {
 			list();
 		} catch (Exception e) {
 			System.out.println("Can't show all files.");
+			return false;
 		}
+		return true;
 	}
 
-	public void goToParentDirAndShowFiles() {
+	public boolean goToParentDirAndShowFiles() {
 		try {
 			parentDir();
 		} catch (Exception e1) {
 			System.out.println("Can't go to the parent directory");
+			return false;
 		}
 		if (DEBUG_MODE_ON) {
 			System.out.println("parent dir:");
@@ -245,7 +248,9 @@ public class FtpClient {
 			list();
 		} catch (Exception e1) {
 			System.out.println("Can't show all files.");
+			return false;
 		}
+		return true;
 	}
 
 	public void disconnectAndExit() {
@@ -257,18 +262,19 @@ public class FtpClient {
 		System.exit(0);
 	}
 
-	public void connectAndShowFiles(String host, int port, String login,
+	public boolean connectAndShowFiles(String host, int port, String login,
 			String password) {
 		try {
 			if (!connect(host, port, login, password)) {
 				System.out
 						.println("Connecting was not successful. Try again please.");
-			
+
 			}
 		} catch (Exception e) {
 			System.out
 					.println("Connecting was not successful. Try again please.");
 			e.printStackTrace();
+			return false;
 		}
 
 		if (DEBUG_MODE_ON) {
@@ -279,10 +285,12 @@ public class FtpClient {
 			list();
 		} catch (Exception e) {
 			System.out.println("Can't show all files. Try again please.");
+			return false;
 		}
+		return true;
 	}
 
-	public void performCommand(String fileCmd) {
+	public boolean performCommand(String fileCmd) {
 		// check the command
 		switch (fileCmd) {
 		case "-1":
@@ -299,7 +307,7 @@ public class FtpClient {
 			} catch (Exception e) {
 				System.out
 						.println("The name is not correct. Try again please ");
-				return;
+				return false;
 			}
 			if (isFile) {
 				new FtpDownloader().download(fileCmd, UserData.getUserData()
@@ -312,5 +320,6 @@ public class FtpClient {
 			}
 			break;
 		}
+		return true;
 	}
 }

@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 public class UserDataProvider {
 
 	private static final String EMPTY_SPACE = "";
-
 	private static UserData userData = UserData.getUserData();
 
 	public static String getUserAnswerForQuestion(String question) {

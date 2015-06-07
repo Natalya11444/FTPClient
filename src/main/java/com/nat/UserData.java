@@ -20,8 +20,6 @@ public class UserData {
 		}
 		return userData;
 	}
-	
-	
 
 	public String getFolder() {
 		return folder;
@@ -42,8 +40,6 @@ public class UserData {
 	public int getPort() {
 		return port;
 	}
-
-	
 
 	public void setFolder(String folder) {
 		this.folder = folder;
